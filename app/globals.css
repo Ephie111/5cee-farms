@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ------------------------------------------------------------------ */
+/* Brand theme — Chiso Foods / 5CEE Farms                              */
+/* Tailwind v4 reads design tokens from this @theme block and          */
+/* auto-generates utilities from them (e.g. --color-forest → bg-forest,*/
+/* text-forest, border-forest, bg-forest/50 ...).                      */
+/* ------------------------------------------------------------------ */
+@theme {
+  --color-forest: #1B5E20;       /* primary — header, buttons, nav */
+  --color-forest-light: #2E7D32;
+  --color-leaf: #66BB6A;         /* secondary — highlights, hovers */
+  --color-cream: #FAF9F6;        /* page background */
+  --color-gold: #D4A017;         /* accent — CTAs, badges */
+  --color-gold-dark: #B5850F;
+  --color-charcoal: #2B2B2B;     /* body text */
+  --color-soil: #6D4C41;         /* footer / earthy sections */
+
+  /* Wired to the CSS variables next/font sets on <body> in layout.tsx */
+  --font-display: var(--font-heading), sans-serif;
+  --font-body: var(--font-body-sans), sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-cream text-charcoal font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-forest;
+  }
+  a {
+    @apply transition-colors duration-200;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold-dark;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-gold px-7 py-3 text-sm font-semibold text-charcoal shadow-sm transition-all hover:bg-gold-dark hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-white/80 px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-white hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+  }
+  .img-placeholder {
+    @apply flex items-center justify-center bg-forest/5 border border-dashed border-forest/30 text-forest/50;
+  }
+}
+
+/* Custom utility (v4 syntax) — replaces the old bg-farm-grain config entry */
+@utility farm-grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(102, 187, 106, 0.12) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Print styles — used by the "Download Receipt" button on the Order   */
+/* Confirmation page. Clicking it calls window.print(), and this rule  */
+/* hides everything on the page except #printable-receipt, so what     */
+/* prints (or gets "Saved as PDF") is just a clean receipt.            */
+/* ------------------------------------------------------------------ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px;
+  }
+  .receipt-print-header {
+    display: block !important;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1B5E20;
+  }
 }
