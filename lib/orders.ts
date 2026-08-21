@@ -8,6 +8,7 @@ export type PaymentStatus = "pending" | "paid" | "failed";
 export type Order = {
   id: string;
   orderNumber: string;
+  userId: string;
   items: CartLine[];
   subtotal: number;
   deliveryFee: number;
@@ -30,6 +31,7 @@ export type Order = {
 type OrderRow = {
   id: string;
   order_number: string;
+  user_id: string;
   items: CartLine[];
   subtotal: number;
   delivery_fee: number;
@@ -53,6 +55,7 @@ function mapRow(row: OrderRow): Order {
   return {
     id: row.id,
     orderNumber: row.order_number,
+    userId: row.user_id,
     items: row.items,
     subtotal: row.subtotal,
     deliveryFee: row.delivery_fee,
@@ -186,4 +189,19 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus): P
     console.error("updateOrderStatus error:", error.message);
     throw new Error(error.message);
   }
+}
+
+/** Every order placed by one specific customer, most recent first. Admins only (enforced by RLS). */
+export async function getOrdersForCustomerAdmin(userId: string): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getOrdersForCustomerAdmin error:", error.message);
+    return [];
+  }
+  return (data as OrderRow[]).map(mapRow);
 }

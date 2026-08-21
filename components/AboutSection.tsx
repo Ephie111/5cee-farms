@@ -1,7 +1,9 @@
+import CountUp from "./CountUp";
+
 const PILLARS = [
   {
     title: "Science-Led",
-    body: "Founded by a neuroscientist, our operations run on evidence-based decisions, continuous innovation, and disciplined systems — not guesswork.",
+    body: "Founded by a neuroscientist, our operations run on evidence-based decisions, continuous innovation, and disciplined systems.",
     icon: "M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5",
   },
   {
@@ -17,10 +19,10 @@ const PILLARS = [
 ];
 
 const QUICK_FACTS = [
-  { label: "Founded", value: "2020" },
-  { label: "Poultry Since", value: "2021" },
-  { label: "Ownership", value: "Family-Owned" },
-  { label: "Location", value: "Anambra, NG" },
+  { label: "Founded", value: "2020", numeric: 2020 },
+  { label: "Poultry Since", value: "2021", numeric: 2021 },
+  { label: "Ownership", value: "Family-Owned", numeric: null },
+  { label: "Location", value: "Anambra, NG", numeric: null },
 ];
 
 export default function AboutSection() {
@@ -39,7 +41,9 @@ export default function AboutSection() {
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {QUICK_FACTS.map((fact) => (
               <div key={fact.label} className="rounded-xl border border-forest/10 bg-white px-4 py-3">
-                <p className="font-display text-sm font-extrabold text-forest">{fact.value}</p>
+                <p className="font-display text-sm font-extrabold text-forest">
+                  {fact.numeric !== null ? <CountUp target={fact.numeric} /> : fact.value}
+                </p>
                 <p className="mt-0.5 text-[11px] uppercase tracking-wide text-charcoal/50">{fact.label}</p>
               </div>
             ))}
@@ -48,8 +52,8 @@ export default function AboutSection() {
           <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-charcoal/80">
             <p>
               5CEE Farms is a family-owned indigenous agro-allied company
-              located in Ifite, Awka South LGA, Anambra State — behind Nnamdi
-              Azikiwe University. Construction began in 2020; commercial
+              located in Ifite, Awka South LGA, Anambra State.
+              Construction began in 2020; commercial
               operations started in 2021 with goat and cattle fattening,
               before we strategically transitioned into poultry production
               to meet Nigeria&rsquo;s growing demand for affordable,

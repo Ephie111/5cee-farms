@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFeaturedProducts } from "@/lib/products";
 import ProductCard from "./ProductCard";
+import ScrollReveal from "./ScrollReveal";
 
 export default async function FeaturedProducts() {
   const products = (await getFeaturedProducts()) ?? [];
@@ -23,8 +24,10 @@ export default async function FeaturedProducts() {
         </p>
       ) : (
         <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {products.map((product, i) => (
+            <ScrollReveal key={product.id} delayMs={i * 80}>
+              <ProductCard product={product} />
+            </ScrollReveal>
           ))}
         </div>
       )}

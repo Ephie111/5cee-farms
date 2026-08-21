@@ -6,18 +6,21 @@ import TeamSection from "@/components/TeamSection";
 import Testimonials from "@/components/Testimonials";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export default function Home() {
   return (
     <>
       <Header />
       <main>
+        {/* Hero animates on load (it's above the fold), not on scroll */}
         <Hero />
-        <FeaturedProducts />
-        <AboutSection />
-        <TeamSection />
-        <Testimonials />
-        <ContactSection />
+
+        <ScrollReveal><FeaturedProducts /></ScrollReveal>
+        <ScrollReveal><AboutSection /></ScrollReveal>
+        <ScrollReveal><TeamSection /></ScrollReveal>
+        <ScrollReveal><Testimonials /></ScrollReveal>
+        <ScrollReveal><ContactSection /></ScrollReveal>
       </main>
       <Footer />
     </>

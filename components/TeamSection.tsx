@@ -1,9 +1,10 @@
 import TeamCard, { TeamMember } from "./TeamCard";
+import ScrollReveal from "./ScrollReveal";
 
 // Founder shown separately; operations team follows.
 // Add a `photo` field (e.g. "/images/team/destiny.jpg") once real photos are ready.
 const FOUNDER: TeamMember = {
-  name: "Dr. Chiso Nwokafor",
+  name: "Chiso Nwokafor, PhD",
   role: "Founder",
 };
 
@@ -45,8 +46,10 @@ export default function TeamSection() {
 
         {/* Operations team grid */}
         <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {OPERATIONS_TEAM.map((member) => (
-            <TeamCard key={member.name} {...member} />
+          {OPERATIONS_TEAM.map((member, i) => (
+            <ScrollReveal key={member.name} delayMs={(i % 4) * 70}>
+              <TeamCard {...member} />
+            </ScrollReveal>
           ))}
         </div>
       </div>

@@ -22,6 +22,7 @@ export default function Footer() {
             </p>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
               <li><Link href="/shop" className="hover:text-gold">All Products</Link></li>
+              <li><Link href="/bulk-orders" className="hover:text-gold">Bulk &amp; Wholesale</Link></li>
               <li><Link href="/cart" className="hover:text-gold">Cart</Link></li>
               <li><Link href="/checkout" className="hover:text-gold">Checkout</Link></li>
             </ul>
@@ -34,6 +35,8 @@ export default function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-white/80">
               <li><Link href="/#about" className="hover:text-gold">About Us</Link></li>
               <li><Link href="/#team" className="hover:text-gold">Our Team</Link></li>
+              <li><Link href="/blog" className="hover:text-gold">Blog</Link></li>
+              <li><Link href="/faq" className="hover:text-gold">FAQ</Link></li>
               <li><Link href="/policies" className="hover:text-gold">Return &amp; Delivery Policy</Link></li>
             </ul>
           </div>

@@ -51,6 +51,15 @@ export default function CheckoutPage() {
       setError("Please fill in your name, phone number, and delivery address.");
       return;
     }
+    if (delivery.deliveryDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const chosenDate = new Date(delivery.deliveryDate);
+      if (chosenDate < today) {
+        setError("Delivery date can't be in the past — please choose today or a future date.");
+        return;
+      }
+    }
 
     setSubmitting(true);
     try {

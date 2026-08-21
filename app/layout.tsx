@@ -3,6 +3,7 @@ import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 // Display face: Sora — sturdy, geometric, confident (used for headings only)
 const displayFont = Sora({
@@ -35,6 +36,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>
+        <WhatsAppButton />
       </body>
     </html>
   );

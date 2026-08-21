@@ -112,6 +112,7 @@ export default function DeliveryForm({
           <input
             type="date"
             value={value.deliveryDate}
+            min={new Date().toISOString().split("T")[0]}
             onChange={(e) => set("deliveryDate", e.target.value)}
             className="rounded-lg border border-forest/20 px-3 py-2.5 focus:border-forest focus:outline-none"
           />

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
@@ -8,10 +9,12 @@ import { useCart } from "@/lib/cart-context";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop" },
   { label: "About Us", href: "/#about" },
   { label: "Our Team", href: "/#team" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Blog", href: "/blog" },
+  { label: "Shop", href: "/shop" },
+  { label: "Bulk Orders", href: "/bulk-orders" },
+  { label: "Contact Us", href: "/#contact" },
 ];
 
 export default function Header() {
@@ -19,46 +22,79 @@ export default function Header() {
   const { items } = useCart();
   const cartItemCount = items.reduce((sum, line) => sum + line.quantity, 0);
   const firstName = (user?.user_metadata?.full_name as string | undefined)?.split(" ")[0];
+  const pathname = usePathname();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
+  // Cart bounce — briefly animate the cart icon whenever the item
+  // count goes UP (not on page load, not when items are removed).
+  const [cartBounce, setCartBounce] = useState(false);
+  const prevCount = useRef(cartItemCount);
+  useEffect(() => {
+    if (cartItemCount > prevCount.current) {
+      setCartBounce(true);
+      const timeout = setTimeout(() => setCartBounce(false), 500);
+      prevCount.current = cartItemCount;
+      return () => clearTimeout(timeout);
+    }
+    prevCount.current = cartItemCount;
+  }, [cartItemCount]);
+
+  function isActive(href: string) {
+    if (href.includes("#")) return false; // hash-anchor links (About/Team/Contact) aren't scroll-spied
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b border-forest/10 bg-cream/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        {/* Logo — replace /public/images/logo.png with the real 5CEE Farms logo */}
-        <Link href="/" className="flex items-center gap-3" onClick={closeMenu}>
-          <div className="relative h-12 w-12 shrink-0">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 lg:px-10">
+        {/* Logo — subtle scale on hover signals it's clickable */}
+        <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
+          <div className="relative h-20 w-20 shrink-0 transition-transform duration-300 group-hover:scale-105">
             <Image
               src="/images/logo.jpg"
               alt="5CEE Farms Ltd logo"
               fill
-              sizes="48px"
+              sizes="80px"
               className="object-contain"
               priority
             />
           </div>
           <div className="leading-tight">
-            <p className="font-display text-lg font-bold text-forest">
+            <p className="font-display text-xl font-bold text-forest">
               5CEE FARMS <span className="text-gold-dark">LTD</span>
             </p>
-            <p className="text-[11px] tracking-widest text-soil uppercase">
+            <p className="text-xs tracking-widest text-soil uppercase">
               Chiso Foods
             </p>
           </div>
         </Link>
 
-        {/* Desktop nav — unchanged, hidden below md */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-charcoal hover:text-forest"
-            >
-              {link.label}
-            </a>
-          ))}
+        {/* Desktop nav — underline sweep on hover, persistent underline on active page */}
+        <nav className="hidden items-center gap-5 md:flex lg:gap-7">
+          {NAV_LINKS.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`group relative py-1 text-sm font-medium transition-colors ${
+                  active ? "text-forest" : "text-charcoal hover:text-forest"
+                }`}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full bg-gold transition-transform duration-300 ease-out ${
+                    active
+                      ? "w-full origin-left scale-x-100"
+                      : "w-full origin-center scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-4">
@@ -67,11 +103,17 @@ export default function Header() {
             className="relative flex h-10 w-10 items-center justify-center rounded-full text-forest hover:bg-forest/5"
             aria-label="View cart"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.907-4.75 2.311-7.303a.996.996 0 00-.998-1.147H5.25M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-            </svg>
+            <span className={cartBounce ? "animate-cart-bounce" : ""}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.907-4.75 2.311-7.303a.996.996 0 00-.998-1.147H5.25M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+              </svg>
+            </span>
             {cartItemCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[11px] font-bold text-charcoal">
+              <span
+                className={`absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[11px] font-bold text-charcoal transition-transform ${
+                  cartBounce ? "scale-125" : "scale-100"
+                }`}
+              >
                 {cartItemCount}
               </span>
             )}
@@ -113,44 +155,58 @@ export default function Header() {
             Shop Now
           </Link>
 
-          {/* Hamburger — mobile only. This is what was missing: everything
-              above collapses away below the sm/md breakpoints with nowhere
-              else for a mobile visitor to reach it, so this button opens
-              a dedicated mobile menu panel that holds all of it. */}
+          {/* Hamburger — morphs into an X rather than swapping icons abruptly */}
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-forest hover:bg-forest/5 md:hidden"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full text-forest hover:bg-forest/5 md:hidden"
           >
-            {menuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
-              </svg>
-            )}
+            <span className="relative flex h-5 w-6 flex-col justify-between">
+              <span
+                className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ease-out ${
+                  menuOpen ? "translate-y-[9px] rotate-45" : ""
+                }`}
+              />
+              <span
+                className={`h-0.5 w-full rounded-full bg-current transition-opacity duration-200 ${
+                  menuOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`h-0.5 w-full rounded-full bg-current transition-transform duration-300 ease-out ${
+                  menuOpen ? "-translate-y-[9px] -rotate-45" : ""
+                }`}
+              />
+            </span>
           </button>
         </div>
       </div>
 
-      {/* Mobile menu panel */}
-      {menuOpen && (
-        <div className="border-t border-forest/10 bg-cream md:hidden">
+      {/* Mobile menu panel — slides/fades in rather than snapping open */}
+      <div
+        className={`grid overflow-hidden border-forest/10 bg-cream transition-all duration-300 ease-out md:hidden ${
+          menuOpen ? "grid-rows-[1fr] border-t opacity-100" : "grid-rows-[0fr] border-t-0 opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
           <nav className="mx-auto flex max-w-7xl flex-col px-6 py-4">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={closeMenu}
-                className="border-b border-forest/5 py-3 text-sm font-medium text-charcoal hover:text-forest"
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMenu}
+                  className={`border-b border-forest/5 py-3 text-sm font-medium ${
+                    active ? "text-forest font-semibold" : "text-charcoal hover:text-forest"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
 
             {!loading && (
               user ? (
@@ -187,7 +243,7 @@ export default function Header() {
             </Link>
           </nav>
         </div>
-      )}
+      </div>
     </header>
   );
 }
