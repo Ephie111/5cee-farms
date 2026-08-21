@@ -16,11 +16,11 @@ export default function Home() {
         {/* Hero animates on load (it's above the fold), not on scroll */}
         <Hero />
 
-        <ScrollReveal><FeaturedProducts /></ScrollReveal>
         <ScrollReveal><AboutSection /></ScrollReveal>
         <ScrollReveal><TeamSection /></ScrollReveal>
         <ScrollReveal><Testimonials /></ScrollReveal>
         <ScrollReveal><ContactSection /></ScrollReveal>
+        <ScrollReveal><FeaturedProducts /></ScrollReveal>
       </main>
       <Footer />
     </>
