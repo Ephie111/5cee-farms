@@ -18,7 +18,7 @@ const SORT_OPTIONS = [
 const DEFAULT_FILTERS: ShopFilterState = {
   categories: [],
   weightBands: [],
-  maxPrice: 20000,
+  maxPrice: Infinity, // no ceiling until we know the real product prices
 };
 
 function weightBandOf(weightOptions: string[]): string {
@@ -40,9 +40,20 @@ export default function ShopPage() {
 
   useEffect(() => {
     getAllProducts()
-      .then(setProducts)
+      .then((fetched) => {
+        setProducts(fetched);
+        // Set the price ceiling to the actual highest price in the catalog,
+        // so nothing is hidden by a stale/guessed default.
+        const highest = fetched.reduce((max, p) => Math.max(max, p.price), 2000);
+        setFilters((prev) => ({ ...prev, maxPrice: highest }));
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  const maxPossiblePrice = useMemo(
+    () => products.reduce((max, p) => Math.max(max, p.price), 2000),
+    [products]
+  );
 
   const filteredProducts = useMemo(() => {
     let list = products.filter((p) => {
@@ -96,7 +107,8 @@ export default function ShopPage() {
             <ShopFilters
               filters={filters}
               onChange={setFilters}
-              onReset={() => setFilters(DEFAULT_FILTERS)}
+              onReset={() => setFilters({ ...DEFAULT_FILTERS, maxPrice: maxPossiblePrice })}
+              maxPossiblePrice={maxPossiblePrice}
             />
 
             <div className="flex-1">

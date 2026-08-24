@@ -5,10 +5,16 @@ export default function StatCard({
 }: {
   label: string;
   value: string;
-  tone?: "default" | "gold" | "warning";
+  tone?: "default" | "gold" | "warning" | "blue";
 }) {
   const valueStyle =
-    tone === "gold" ? "text-gold-dark" : tone === "warning" ? "text-red-600" : "text-forest";
+    tone === "gold"
+      ? "text-gold-dark"
+      : tone === "warning"
+        ? "text-red-600"
+        : tone === "blue"
+          ? "text-blue-600"
+          : "text-forest";
 
   return (
     <div className="rounded-2xl border border-forest/10 bg-white p-5">

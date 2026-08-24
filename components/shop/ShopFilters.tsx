@@ -13,10 +13,15 @@ export default function ShopFilters({
   filters,
   onChange,
   onReset,
+  maxPossiblePrice,
 }: {
   filters: ShopFilterState;
   onChange: (next: ShopFilterState) => void;
   onReset: () => void;
+  /** The highest price among currently loaded products — the slider can
+   *  never go higher than this, so it stays accurate as products are
+   *  added/priced over time instead of a hardcoded ceiling. */
+  maxPossiblePrice: number;
 }) {
   function toggleCategory(cat: string) {
     const exists = filters.categories.includes(cat);
@@ -99,16 +104,16 @@ export default function ShopFilters({
           </p>
           <input
             type="range"
-            min={2000}
-            max={20000}
+            min={Math.min(2000, maxPossiblePrice)}
+            max={maxPossiblePrice}
             step={500}
             value={filters.maxPrice}
             onChange={(e) => onChange({ ...filters, maxPrice: Number(e.target.value) })}
             className="mt-3 w-full accent-forest"
           />
           <div className="mt-1 flex justify-between text-[11px] text-charcoal/50">
-            <span>₦2,000</span>
-            <span>₦20,000</span>
+            <span>₦{Math.min(2000, maxPossiblePrice).toLocaleString("en-NG")}</span>
+            <span>₦{maxPossiblePrice.toLocaleString("en-NG")}</span>
           </div>
         </div>
       </div>

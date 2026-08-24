@@ -30,10 +30,12 @@ export default function AdminDashboardPage() {
       <p className="mt-1 text-sm text-charcoal/60">An overview of how the store is doing.</p>
 
       {/* Stat cards */}
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
         <StatCard label="Total Revenue (Paid)" value={formatNaira(stats.totalRevenue)} />
         <StatCard label="Total Orders" value={String(stats.totalOrders)} />
         <StatCard label="Processing" value={String(stats.ordersByStatus.Processing)} tone="gold" />
+        <StatCard label="Out for Delivery" value={String(stats.ordersByStatus["Out for Delivery"])} tone="blue" />
+        <StatCard label="Delivered" value={String(stats.ordersByStatus.Delivered)} />
         <StatCard
           label="Out of Stock"
           value={String(stats.outOfStockCount)}

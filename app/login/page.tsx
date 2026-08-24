@@ -68,7 +68,9 @@ export default function LoginPage() {
               required
             />
             <p className="mt-1.5 text-right text-xs text-charcoal/50">
-              Forgot password? <span className="text-forest/60">(coming soon)</span>
+              <Link href="/forgot-password" className="text-forest hover:underline">
+                Forgot password?
+              </Link>
             </p>
           </div>
 

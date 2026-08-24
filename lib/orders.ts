@@ -184,10 +184,36 @@ export async function getAllOrdersAdmin(): Promise<Order[]> {
 
 /** Updates an order's fulfillment status. Admins only (enforced by RLS). */
 export async function updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
-  const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ status })
+    .eq("id", orderId)
+    .select("order_number")
+    .single();
+
   if (error) {
     console.error("updateOrderStatus error:", error.message);
     throw new Error(error.message);
+  }
+
+  // Fire the notification email, but never let a failure here undo or
+  // block the status change itself — the update already succeeded.
+  if (data?.order_number) {
+    fetch("/api/send-order-status-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderNumber: data.order_number, status }),
+    })
+      .then(async (res) => {
+        const result = await res.json();
+        if (!result.sent) {
+          // Visible in the browser console (F12 → Console) — this is a
+          // rejected/failed send, not a network error, so it wouldn't
+          // otherwise show up anywhere.
+          console.warn("Order status email was not sent:", result.error);
+        }
+      })
+      .catch((err) => console.error("Order status email request failed:", err));
   }
 }
 
