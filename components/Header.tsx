@@ -9,12 +9,12 @@ import { useCart } from "@/lib/cart-context";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/#about" },
+  { label: "About Us", href: "/about" },
   { label: "Our Team", href: "/#team" },
   { label: "Blog", href: "/blog" },
   { label: "Shop", href: "/shop" },
   { label: "Bulk Orders", href: "/bulk-orders" },
-  { label: "Contact Us", href: "/#contact" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Header() {
@@ -47,8 +47,26 @@ export default function Header() {
     return pathname === href || pathname.startsWith(`${href}/`);
   }
 
+  // Header "activates" — slightly deeper background + a real shadow —
+  // once the page has scrolled a bit, instead of always looking the same.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 12);
+    }
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-forest/10 bg-cream/95 backdrop-blur">
+    <header
+      className={`sticky top-0 z-50 border-b backdrop-blur transition-all duration-300 ${
+        scrolled
+          ? "border-forest/15 bg-cream/98 shadow-md"
+          : "border-forest/10 bg-cream/95 shadow-none"
+      }`}
+    >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 lg:px-10">
         {/* Logo — subtle scale on hover signals it's clickable */}
         <Link href="/" className="group flex items-center gap-3" onClick={closeMenu}>
@@ -76,23 +94,29 @@ export default function Header() {
         <nav className="hidden items-center gap-5 md:flex lg:gap-7">
           {NAV_LINKS.map((link) => {
             const active = isActive(link.href);
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`group relative py-1 text-sm font-medium transition-colors ${
-                  active ? "text-forest" : "text-charcoal hover:text-forest"
+            const isHashAnchor = link.href.includes("#");
+            const linkClassName = `group relative py-1 text-sm font-medium transition-colors ${
+              active ? "text-forest" : "text-charcoal hover:text-forest"
+            }`;
+            const underline = (
+              <span
+                className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full bg-gold transition-transform duration-300 ease-out ${
+                  active
+                    ? "w-full origin-left scale-x-100"
+                    : "w-full origin-center scale-x-0 group-hover:scale-x-100"
                 }`}
-              >
+              />
+            );
+            return isHashAnchor ? (
+              <a key={link.href} href={link.href} className={linkClassName}>
                 {link.label}
-                <span
-                  className={`absolute -bottom-0.5 left-0 h-0.5 rounded-full bg-gold transition-transform duration-300 ease-out ${
-                    active
-                      ? "w-full origin-left scale-x-100"
-                      : "w-full origin-center scale-x-0 group-hover:scale-x-100"
-                  }`}
-                />
+                {underline}
               </a>
+            ) : (
+              <Link key={link.href} href={link.href} className={linkClassName}>
+                {link.label}
+                {underline}
+              </Link>
             );
           })}
         </nav>
@@ -194,17 +218,18 @@ export default function Header() {
           <nav className="mx-auto flex max-w-7xl flex-col px-6 py-4">
             {NAV_LINKS.map((link) => {
               const active = isActive(link.href);
-              return (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={closeMenu}
-                  className={`border-b border-forest/5 py-3 text-sm font-medium ${
-                    active ? "text-forest font-semibold" : "text-charcoal hover:text-forest"
-                  }`}
-                >
+              const isHashAnchor = link.href.includes("#");
+              const linkClassName = `border-b border-forest/5 py-3 text-sm font-medium ${
+                active ? "text-forest font-semibold" : "text-charcoal hover:text-forest"
+              }`;
+              return isHashAnchor ? (
+                <a key={link.href} href={link.href} onClick={closeMenu} className={linkClassName}>
                   {link.label}
                 </a>
+              ) : (
+                <Link key={link.href} href={link.href} onClick={closeMenu} className={linkClassName}>
+                  {link.label}
+                </Link>
               );
             })}
 

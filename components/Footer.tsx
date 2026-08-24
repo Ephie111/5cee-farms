@@ -33,7 +33,7 @@ export default function Footer() {
               Company
             </p>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
-              <li><Link href="/#about" className="hover:text-gold">About Us</Link></li>
+              <li><Link href="/about" className="hover:text-gold">About Us</Link></li>
               <li><Link href="/#team" className="hover:text-gold">Our Team</Link></li>
               <li><Link href="/blog" className="hover:text-gold">Blog</Link></li>
               <li><Link href="/faq" className="hover:text-gold">FAQ</Link></li>
@@ -46,6 +46,7 @@ export default function Footer() {
               Contact
             </p>
             <ul className="mt-4 space-y-2 text-sm text-white/80">
+              <li><Link href="/contact" className="hover:text-gold">Contact Us</Link></li>
               <li>NKPAGU Farmland, Obodo Adaka, Ifite Awka</li>
               <li>Awka South LGA, Anambra State</li>
               <li>

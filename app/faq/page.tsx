@@ -47,7 +47,7 @@ export default function FaqPage() {
               >
                 Chat on WhatsApp
               </a>
-              <Link href="/#contact" className="rounded-full border-2 border-forest/20 px-7 py-3 text-sm font-semibold text-forest transition-colors hover:bg-forest/5">
+              <Link href="/contact" className="rounded-full border-2 border-forest/20 px-7 py-3 text-sm font-semibold text-forest transition-colors hover:bg-forest/5">
                 Contact Us
               </Link>
             </div>
