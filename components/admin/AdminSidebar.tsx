@@ -6,19 +6,22 @@ import { useAuth } from "@/lib/auth-context";
 
 // More links (Dashboard, Products, Customers, etc.) get added here as
 // those admin pages are built.
-const LINKS = [
+const BASE_LINKS = [
   { label: "Dashboard", href: "/admin" },
   { label: "Orders", href: "/admin/orders" },
   { label: "Products", href: "/admin/products" },
   { label: "Customers", href: "/admin/customers" },
   { label: "Reports", href: "/admin/reports" },
-  { label: "Manage Admins", href: "/admin/team" },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isSuperAdmin }: { isSuperAdmin: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const { signOut } = useAuth();
+
+  const links = isSuperAdmin
+    ? [...BASE_LINKS, { label: "Manage Admins", href: "/admin/team" }, { label: "Activity Log", href: "/admin/activity" }]
+    : BASE_LINKS;
 
   async function handleSignOut() {
     await signOut();
@@ -28,7 +31,7 @@ export default function AdminSidebar() {
   return (
     <aside className="w-full shrink-0 lg:w-56">
       <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-forest/10 bg-white p-2 lg:flex-col lg:gap-1 lg:overflow-visible">
-        {LINKS.map((link) => {
+        {links.map((link) => {
           const active = link.href === "/admin" ? pathname === "/admin" : pathname.startsWith(link.href);
           return (
             <Link

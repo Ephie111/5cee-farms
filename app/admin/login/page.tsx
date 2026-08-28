@@ -2,25 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth-context";
 
+const ADMIN_TIER_ROLES = ["admin", "super_admin"];
+
+const STATUS_MESSAGES: Record<string, string> = {
+  pending_invitation: "Your account setup isn't complete yet — check your email for the invitation link.",
+  inactive: "Your account has been deactivated. Contact a Super Admin to restore access.",
+  suspended: "Your account has been suspended. Contact a Super Admin for more information.",
+  resigned: "This account is no longer active.",
+};
+
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { user, role, loading: authLoading } = useAuth();
+  const { user, role, status, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If someone lands here already logged in as an admin (e.g. a
+  // If someone lands here already logged in as an active admin (e.g. a
   // bookmarked /admin/login), skip straight to the Dashboard instead
   // of making them look at a login form again.
   useEffect(() => {
-    if (!authLoading && user && role === "admin") {
+    if (!authLoading && user && role && ADMIN_TIER_ROLES.includes(role) && status === "active") {
       router.push("/admin");
     }
-  }, [authLoading, user, role, router]);
+  }, [authLoading, user, role, status, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,22 +46,36 @@ export default function AdminLoginPage() {
       console.error("Admin login error:", signInError);
       setLoading(false);
       setError("Incorrect email or password.");
+      // Log the attempt (server-side looks up whether this email even
+      // belongs to an admin account — this call never reveals that
+      // either way, it just records it if relevant).
+      fetch("/api/admin/log-failed-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }).catch(() => {});
       return;
     }
 
-    // Check the role directly here rather than waiting on AuthContext —
-    // avoids a race where we'd redirect before the context finishes
-    // loading the role.
+    // Check the role/status directly here rather than waiting on
+    // AuthContext — avoids a race where we'd redirect before the
+    // context finishes loading.
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, status")
       .eq("id", signInData.user.id)
       .single();
 
     setLoading(false);
 
-    if (profile?.role !== "admin") {
+    if (!profile || !ADMIN_TIER_ROLES.includes(profile.role)) {
       setError("This account doesn't have admin access.");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    if (profile.status !== "active") {
+      setError(STATUS_MESSAGES[profile.status] ?? "This account cannot log in right now.");
       await supabase.auth.signOut();
       return;
     }
@@ -96,6 +120,11 @@ export default function AdminLoginPage() {
             {loading ? "Logging in…" : "Log In"}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-xs text-charcoal/40">
+          Admin accounts are invitation-only.{" "}
+          <Link href="/" className="underline">Return to site</Link>
+        </p>
       </div>
     </main>
   );
