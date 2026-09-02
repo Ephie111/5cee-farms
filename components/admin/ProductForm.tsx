@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Product, ProductInput, slugify } from "@/lib/products";
+import Image from "next/image";
+import { Product, ProductInput, slugify, uploadProductImage } from "@/lib/products";
 
 const CATEGORIES: Product["category"][] = ["Whole Chicken", "Chicken Cuts", "Live Birds", "Offal"];
 
@@ -18,6 +19,7 @@ export type ProductFormValues = {
   stockQuantity: string;
   isFeatured: boolean;
   isActive: boolean;
+  imageUrl: string | null;
 };
 
 function toFormValues(product: Product): ProductFormValues {
@@ -33,6 +35,7 @@ function toFormValues(product: Product): ProductFormValues {
     stockQuantity: String(product.stockQuantity),
     isFeatured: product.isFeatured ?? false,
     isActive: product.isActive,
+    imageUrl: product.imageUrl,
   };
 }
 
@@ -48,6 +51,7 @@ const EMPTY_VALUES: ProductFormValues = {
   stockQuantity: "0",
   isFeatured: false,
   isActive: true,
+  imageUrl: null,
 };
 
 export default function ProductForm({
@@ -66,10 +70,45 @@ export default function ProductForm({
   );
   const [idManuallyEdited, setIdManuallyEdited] = useState(isEditing);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function set<K extends keyof ProductFormValues>(key: K, val: ProductFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: val }));
+  }
+
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be smaller than 5MB.");
+      return;
+    }
+
+    // A product needs an id before it has anywhere to upload the image
+    // to — for a brand-new product, make sure the name (and therefore
+    // the auto-filled id) is entered first.
+    if (!values.id.trim()) {
+      setError("Enter a product name first, so the image has an id to upload under.");
+      return;
+    }
+
+    setError(null);
+    setUploadingImage(true);
+    try {
+      const url = await uploadProductImage(values.id.trim(), file);
+      set("imageUrl", url);
+    } catch (err) {
+      console.error("Image upload error:", err);
+      setError(err instanceof Error ? err.message : "Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+    }
   }
 
   function handleNameChange(name: string) {
@@ -119,6 +158,7 @@ export default function ProductForm({
         stockQuantity,
         isFeatured: values.isFeatured,
         isActive: values.isActive,
+        imageUrl: values.imageUrl,
       });
       router.push("/admin/products");
     } catch (err) {
@@ -142,6 +182,43 @@ export default function ProductForm({
             className="rounded-lg border border-forest/20 px-3 py-2.5 focus:border-forest focus:outline-none"
           />
         </label>
+
+        <div className="flex flex-col gap-1.5 text-sm sm:col-span-2">
+          <span className="font-medium text-charcoal/80">Product Photo</span>
+          <div className="flex items-center gap-4">
+            <div className="img-placeholder relative h-24 w-24 shrink-0 overflow-hidden rounded-xl">
+              {values.imageUrl ? (
+                <Image src={values.imageUrl} alt="" fill sizes="96px" className="object-cover" />
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0021 3H3a1.5 1.5 0 00-1.5 1.5v15A1.5 1.5 0 003 21z" />
+                </svg>
+              )}
+            </div>
+            <div>
+              <label className="inline-flex cursor-pointer items-center rounded-full border border-forest/20 px-4 py-2 text-xs font-semibold text-forest hover:bg-forest/5">
+                {uploadingImage ? "Uploading…" : values.imageUrl ? "Replace Photo" : "Upload Photo"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={uploadingImage}
+                  className="hidden"
+                />
+              </label>
+              {values.imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => set("imageUrl", null)}
+                  className="ml-2 text-xs font-medium text-charcoal/50 hover:text-red-600"
+                >
+                  Remove
+                </button>
+              )}
+              <p className="mt-1 text-[11px] text-charcoal/40">JPG or PNG, up to 5MB.</p>
+            </div>
+          </div>
+        </div>
 
         <label className="flex flex-col gap-1.5 text-sm sm:col-span-2">
           <span className="font-medium text-charcoal/80">

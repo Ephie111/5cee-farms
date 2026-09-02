@@ -5,14 +5,22 @@ export type TeamMember = {
   role: string;
   /** Path under /public once a real photo is available, e.g. "/images/team/destiny.jpg" */
   photo?: string;
+  photoPosition?: string;
 };
 
-export default function TeamCard({ name, role, photo }: TeamMember) {
+export default function TeamCard({ name, role, photo, photoPosition = "top" }: TeamMember) {
   return (
-    <div className="group rounded-2xl border border-forest/10 bg-white p-5 text-center shadow-sm transition-shadow hover:shadow-md">
+    <div className="group rounded-2xl border border-forest/10 bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       <div className="img-placeholder relative mx-auto h-28 w-28 overflow-hidden rounded-full">
         {photo ? (
-          <Image src={photo} alt={name} fill className="object-cover" />
+          <Image
+            src={photo}
+            alt={name}
+            fill
+            sizes="112px"
+            className="object-cover"
+            style={{ objectPosition: photoPosition }}
+          />
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"

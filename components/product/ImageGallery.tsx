@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 const PLACEHOLDER_COUNT = 4;
 
@@ -12,8 +13,23 @@ function PlaceholderIcon({ className = "h-8 w-8" }: { className?: string }) {
   );
 }
 
-export default function ImageGallery({ productName }: { productName: string }) {
+export default function ImageGallery({
+  productName,
+  imageUrl,
+}: {
+  productName: string;
+  /** Real uploaded photo, if one exists — only one photo is supported per product for now. */
+  imageUrl?: string | null;
+}) {
   const [active, setActive] = useState(0);
+
+  if (imageUrl) {
+    return (
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl">
+        <Image src={imageUrl} alt={productName} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" priority />
+      </div>
+    );
+  }
 
   return (
     <div>

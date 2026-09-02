@@ -18,6 +18,7 @@ export type Product = {
   stockQuantity: number;
   isFeatured?: boolean;
   isActive: boolean;
+  imageUrl: string | null;
 };
 
 // Supabase stores columns in snake_case; this converts each row to the
@@ -36,6 +37,7 @@ type ProductRow = {
   stock_quantity: number;
   is_featured: boolean;
   is_active: boolean;
+  image_url: string | null;
 };
 
 function mapRow(row: ProductRow): Product {
@@ -53,6 +55,7 @@ function mapRow(row: ProductRow): Product {
     stockQuantity: row.stock_quantity,
     isFeatured: row.is_featured,
     isActive: row.is_active,
+    imageUrl: row.image_url,
   };
 }
 
@@ -193,6 +196,7 @@ export type ProductInput = {
   stockQuantity: number;
   isFeatured: boolean;
   isActive: boolean;
+  imageUrl?: string | null;
 };
 
 /** Turns a product name into a URL-safe id, e.g. "Chicken Wings" → "chicken-wings". */
@@ -220,6 +224,7 @@ export async function createProduct(input: ProductInput): Promise<Product> {
       stock_quantity: input.stockQuantity,
       is_featured: input.isFeatured,
       is_active: input.isActive,
+      image_url: input.imageUrl ?? null,
     })
     .select()
     .single();
@@ -246,6 +251,7 @@ export async function updateProduct(id: string, input: Omit<ProductInput, "id">)
       stock_quantity: input.stockQuantity,
       is_featured: input.isFeatured,
       is_active: input.isActive,
+      image_url: input.imageUrl ?? null,
     })
     .eq("id", id)
     .select()
@@ -256,6 +262,30 @@ export async function updateProduct(id: string, input: Omit<ProductInput, "id">)
     throw new Error(error?.message ?? "Failed to update product.");
   }
   return mapRow(data as ProductRow);
+}
+
+/**
+ * Uploads a product image to Supabase Storage and returns its public URL.
+ * Admins only (enforced by storage policies). Overwrites any previous
+ * image for the same product (one image per product for now).
+ */
+export async function uploadProductImage(productId: string, file: File): Promise<string> {
+  const ext = file.name.split(".").pop() ?? "jpg";
+  const path = `${productId}/main.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("product-images")
+    .upload(path, file, { upsert: true, cacheControl: "3600" });
+
+  if (uploadError) {
+    console.error("uploadProductImage error:", uploadError.message);
+    throw new Error(uploadError.message);
+  }
+
+  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+  // Cache-bust so a re-uploaded image (same path) shows immediately
+  // instead of a browser/CDN serving the old cached file at that URL.
+  return `${data.publicUrl}?t=${Date.now()}`;
 }
 
 /**

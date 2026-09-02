@@ -100,7 +100,7 @@ export default function ProductDetailPage() {
         </nav>
 
         <div className="mt-6 grid gap-12 lg:grid-cols-2">
-          <ImageGallery productName={product.name} />
+          <ImageGallery productName={product.name} imageUrl={product.imageUrl} />
 
           <div>
             <span className="w-fit rounded-full bg-forest/5 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-forest">
