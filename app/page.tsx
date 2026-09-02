@@ -8,6 +8,14 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 
+// Must live here (the route file), not inside FeaturedProducts.tsx —
+// Next.js only reads this special export from page.tsx/layout.tsx
+// files, not from arbitrary imported components. Without it here,
+// admin product changes (featured status, price, stock) won't show
+// on this page until the next deployment, since it would otherwise
+// be cached indefinitely on Vercel.
+export const revalidate = 0;
+
 export default function Home() {
   return (
     <>

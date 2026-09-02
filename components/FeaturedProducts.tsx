@@ -3,12 +3,6 @@ import { getFeaturedProducts } from "@/lib/products";
 import ProductCard from "./ProductCard";
 import ScrollReveal from "./ScrollReveal";
 
-// Without this, Next.js caches this Server Component's data fetch
-// indefinitely on Vercel (production) — meaning a new/edited product
-// wouldn't show up here until the next deployment. This forces it to
-// always fetch fresh data instead, so admin changes appear immediately.
-export const revalidate = 0;
-
 export default async function FeaturedProducts() {
   const products = (await getFeaturedProducts()) ?? [];
 
