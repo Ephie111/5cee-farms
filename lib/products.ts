@@ -129,6 +129,41 @@ export function formatNaira(amount: number): string {
 // ---------------------------------------------------------------------
 
 /** Every product, active or not. Admins only (enforced by RLS). */
+/**
+ * Checks whether the requested quantities are actually available right
+ * now, for a list of { productId, quantity } — used at Checkout right
+ * before charging a card, so a customer isn't charged for something
+ * that ran out since they added it to their cart. This is a courtesy
+ * pre-check, not the real safeguard — the actual, race-condition-proof
+ * stock deduction happens atomically in createOrder() itself.
+ */
+export async function checkStockAvailability(
+  items: { productId: string; quantity: number; name: string }[]
+): Promise<{ available: boolean; unavailableItem?: string }> {
+  const ids = items.map((i) => i.productId);
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, stock_quantity")
+    .in("id", ids);
+
+  if (error || !data) {
+    // If the check itself fails, don't block checkout on it — the
+    // atomic check in createOrder() is the real safeguard regardless.
+    return { available: true };
+  }
+
+  const stockById = new Map(data.map((row) => [row.id, row.stock_quantity as number]));
+
+  for (const item of items) {
+    const stock = stockById.get(item.productId) ?? 0;
+    if (stock < item.quantity) {
+      return { available: false, unavailableItem: item.name };
+    }
+  }
+
+  return { available: true };
+}
+
 export async function getAllProductsAdmin(): Promise<Product[]> {
   const { data, error } = await supabase.from("products").select("*").order("name");
 

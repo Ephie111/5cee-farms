@@ -11,6 +11,7 @@ import OrderSummary from "@/components/cart/OrderSummary";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { createOrder } from "@/lib/orders";
+import { checkStockAvailability } from "@/lib/products";
 import { payWithPaystack } from "@/lib/paystack";
 
 const DELIVERY_FEE = 1500;
@@ -63,6 +64,22 @@ export default function CheckoutPage() {
 
     setSubmitting(true);
     try {
+      // Check stock is actually still available before charging anything —
+      // catches "ran out earlier today" cases. The real, race-condition-
+      // proof safeguard happens atomically inside createOrder() itself;
+      // this is just to avoid charging a card unnecessarily in the
+      // common case.
+      const stockCheck = await checkStockAvailability(
+        items.map((line) => ({ productId: line.productId, quantity: line.quantity, name: line.name }))
+      );
+      if (!stockCheck.available) {
+        setError(
+          `Sorry, "${stockCheck.unavailableItem}" no longer has enough stock. Please update your cart and try again.`
+        );
+        setSubmitting(false);
+        return;
+      }
+
       const total = subtotal + DELIVERY_FEE;
       let paymentStatus: "pending" | "paid" = "pending";
       let paystackReference: string | undefined;

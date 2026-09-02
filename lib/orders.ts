@@ -94,44 +94,53 @@ export type CreateOrderInput = {
   paystackReference?: string;
 };
 
-/** Creates a real order row, tied to whoever is currently logged in. */
+/** Creates a real order row, tied to whoever is currently logged in.
+ *  Also atomically deducts stock for every item — see
+ *  supabase/stock_deduction_migration.sql for why this has to happen
+ *  as a single database transaction rather than separate steps here. */
 export async function createOrder(input: CreateOrderInput): Promise<Order> {
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError || !userData.user) {
     throw new Error("You must be logged in to place an order.");
   }
 
-  const total = input.subtotal + input.deliveryFee;
+  const { data, error } = await supabase.rpc("create_order_with_stock_check", {
+    p_user_id: userData.user.id,
+    p_items: input.items,
+    p_subtotal: input.subtotal,
+    p_delivery_fee: input.deliveryFee,
+    p_full_name: input.fullName,
+    p_phone: input.phone,
+    p_email: input.email ?? null,
+    p_address: input.address,
+    p_city: input.city,
+    p_state: input.state ?? "Anambra",
+    p_delivery_date: input.deliveryDate ?? null,
+    p_delivery_slot: input.deliverySlot ?? null,
+    p_payment_method: input.paymentMethod,
+    p_payment_status: input.paymentStatus ?? "pending",
+    p_paystack_reference: input.paystackReference ?? null,
+  });
 
-  const { data, error } = await supabase
-    .from("orders")
-    .insert({
-      user_id: userData.user.id,
-      items: input.items,
-      subtotal: input.subtotal,
-      delivery_fee: input.deliveryFee,
-      total,
-      full_name: input.fullName,
-      phone: input.phone,
-      email: input.email ?? null,
-      address: input.address,
-      city: input.city,
-      state: input.state ?? "Anambra",
-      delivery_date: input.deliveryDate ?? null,
-      delivery_slot: input.deliverySlot ?? null,
-      payment_method: input.paymentMethod,
-      payment_status: input.paymentStatus ?? "pending",
-      paystack_reference: input.paystackReference ?? null,
-    })
-    .select()
-    .single();
-
-  if (error || !data) {
-    console.error("createOrder error:", error?.message);
-    throw new Error(error?.message ?? "Failed to create order.");
+  if (error) {
+    console.error("createOrder error:", error.message);
+    if (error.message.includes("insufficient_stock")) {
+      const itemName = error.message.split(":")[1]?.trim();
+      throw new Error(
+        itemName
+          ? `Sorry, "${itemName}" no longer has enough stock for this order. Please update your cart and try again.`
+          : "Sorry, one of the items in your cart is no longer available in the requested quantity."
+      );
+    }
+    throw new Error("Failed to create order.");
   }
 
-  return mapRow(data as OrderRow);
+  const order = Array.isArray(data) ? data[0] : data;
+  if (!order) {
+    throw new Error("Failed to create order.");
+  }
+
+  return mapRow(order as OrderRow);
 }
 
 /** All orders for the currently logged-in customer, most recent first. */
