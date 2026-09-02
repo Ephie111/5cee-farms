@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product, formatNaira } from "@/lib/products";
@@ -7,12 +8,13 @@ import { useCart } from "@/lib/cart-context";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
+  const [selectedWeight, setSelectedWeight] = useState(product.weightOptions[0] ?? product.unit);
 
   function handleAddToCart() {
     addItem({
       productId: product.id,
       name: product.name,
-      weight: product.weightOptions[0] ?? product.unit,
+      weight: selectedWeight,
       price: product.price,
       quantity: 1,
     });
@@ -44,7 +46,21 @@ export default function ProductCard({ product }: { product: Product }) {
         <Link href={`/product/${product.id}`} className="font-display text-sm font-bold leading-snug text-charcoal hover:text-forest">
           {product.name}
         </Link>
-        <p className="text-xs text-charcoal/60">{product.weightOptions.join(" · ")}</p>
+
+        {product.weightOptions.length > 1 ? (
+          <select
+            value={selectedWeight}
+            onChange={(e) => setSelectedWeight(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            className="w-fit rounded-md border border-forest/20 bg-white px-2 py-1 text-xs text-charcoal/70 focus:border-forest focus:outline-none"
+          >
+            {product.weightOptions.map((w) => (
+              <option key={w} value={w}>{w}</option>
+            ))}
+          </select>
+        ) : (
+          <p className="text-xs text-charcoal/60">{product.weightOptions.join(" · ")}</p>
+        )}
 
         <div className="mt-auto flex items-center justify-between pt-2">
           <span className="font-display text-base font-extrabold text-forest">
