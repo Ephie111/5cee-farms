@@ -323,13 +323,13 @@ export default function TermsPage() {
             <p>Anambra State, Nigeria</p>
             <p className="mt-2">
               Email:{" "}
-              <a href="mailto:cun210_1@hotmail.com" className="text-forest no-underline">
-                cun210_1@hotmail.com
+              <a href="mailto:chisofoods@gmail.com" className="text-forest underline">
+                chisofoods@gmail.com
               </a>
             </p>
             <p>
               Telephone/WhatsApp:{" "}
-              <a href="tel:+2347061302674" className="text-forest no-underline">
+              <a href="tel:+2347061302674" className="text-forest underline">
                 0706 130 2674
               </a>
             </p>

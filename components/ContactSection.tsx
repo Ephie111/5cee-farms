@@ -11,6 +11,12 @@ const CONTACT_DETAILS = [
     icon: "phone",
   },
   {
+    label: "Email",
+    value: "chisofoods@gmail.com",
+    href: "mailto:chisofoods@gmail.com",
+    icon: "email",
+  },
+  {
     label: "WhatsApp",
     value: "Chat with us",
     href: "https://wa.me/2347061302674",
@@ -24,6 +30,8 @@ function Icon({ name }: { name: string }) {
     pin: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z",
     phone:
       "M2.25 6.75c0 8.284 6.716 15 15 15h1.5a1.5 1.5 0 001.5-1.5v-2.204a1.5 1.5 0 00-1.106-1.447l-3.516-.937a1.5 1.5 0 00-1.53.415l-1.11 1.11a11.25 11.25 0 01-5.472-5.472l1.11-1.11a1.5 1.5 0 00.415-1.53l-.937-3.516A1.5 1.5 0 006.204 4.5H4.5a1.5 1.5 0 00-1.5 1.5v.75z",
+    email:
+      "M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75",
     chat: "M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zM12.375 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zM16.125 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zM21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z",
   };
   return (
@@ -51,12 +59,14 @@ export default function ContactSection() {
             From Our Farm to Your Table
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-charcoal/70">
-            We'd love to hear from you. Reach out with any questions, and our team will be happy to assist.
+            Have a question, a bulk order, or a partnership idea? Reach the
+            5CEE Farms team directly — we usually respond fastest on
+            WhatsApp.
           </p>
         </div>
 
         {/* Contact method cards — evenly sized, WhatsApp visually emphasized as the fastest channel */}
-        <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-3">
+        <div className="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {CONTACT_DETAILS.map((item) => {
             const CardInner = (
               <>

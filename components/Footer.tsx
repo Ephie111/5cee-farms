@@ -54,6 +54,11 @@ export default function Footer() {
                   0706 130 2674
                 </a>
               </li>
+              <li>
+                <a href="mailto:chisofoods@gmail.com" className="hover:text-gold">
+                  chisofoods@gmail.com
+                </a>
+              </li>
             </ul>
           </div>
         </div>
