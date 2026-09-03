@@ -55,6 +55,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="tel:+2347041003539" className="hover:text-gold">
+                  0704 100 3539
+                </a>
+              </li>
+              <li>
                 <a href="mailto:chisofoods@gmail.com" className="hover:text-gold">
                   chisofoods@gmail.com
                 </a>

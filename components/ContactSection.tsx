@@ -1,4 +1,21 @@
-const CONTACT_DETAILS = [
+type SimpleContactItem = {
+  label: string;
+  value: string;
+  href?: string;
+  icon: string;
+  highlight?: boolean;
+};
+
+type MultiValueContactItem = {
+  label: string;
+  values: { text: string; href: string }[];
+  icon: string;
+  highlight?: boolean;
+};
+
+type ContactItem = SimpleContactItem | MultiValueContactItem;
+
+const CONTACT_DETAILS: ContactItem[] = [
   {
     label: "Farm Address",
     value: "NKPAGU Farmland, Obodo Adaka, Ifite Awka, Awka South LGA, Anambra State",
@@ -6,8 +23,10 @@ const CONTACT_DETAILS = [
   },
   {
     label: "Phone",
-    value: "0706 130 2674",
-    href: "tel:+2347061302674",
+    values: [
+      { text: "0706 130 2674", href: "tel:+2347061302674" },
+      { text: "0704 100 3539", href: "tel:+2347041003539" },
+    ],
     icon: "phone",
   },
   {
@@ -68,22 +87,57 @@ export default function ContactSection() {
         {/* Contact method cards — evenly sized, WhatsApp visually emphasized as the fastest channel */}
         <div className="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {CONTACT_DETAILS.map((item) => {
+            const iconWrapper = (
+              <span
+                className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                  item.highlight ? "bg-white/15 text-white" : "bg-forest/10 text-forest"
+                }`}
+              >
+                <Icon name={item.icon} />
+              </span>
+            );
+            const labelText = (
+              <p
+                className={`mt-4 text-xs font-semibold uppercase tracking-wide ${
+                  item.highlight ? "text-gold" : "text-gold-dark"
+                }`}
+              >
+                {item.label}
+              </p>
+            );
+
+            const cardClasses = item.highlight
+              ? "rounded-2xl bg-forest p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5"
+              : "rounded-2xl border border-forest/10 bg-white p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5";
+
+            // Multi-value cards (currently just Phone) render as a plain
+            // card with each number as its own clickable line — can't
+            // wrap the whole card in one link when there are two
+            // separate destinations to call.
+            if ("values" in item) {
+              return (
+                <div key={item.label} className={`flex flex-col items-center ${cardClasses}`}>
+                  {iconWrapper}
+                  {labelText}
+                  <div className="mt-1 space-y-0.5">
+                    {item.values.map((v) => (
+                      <a
+                        key={v.href}
+                        href={v.href}
+                        className="block text-sm font-medium leading-relaxed text-charcoal hover:text-forest hover:underline"
+                      >
+                        {v.text}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+
             const CardInner = (
               <>
-                <span
-                  className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                    item.highlight ? "bg-white/15 text-white" : "bg-forest/10 text-forest"
-                  }`}
-                >
-                  <Icon name={item.icon} />
-                </span>
-                <p
-                  className={`mt-4 text-xs font-semibold uppercase tracking-wide ${
-                    item.highlight ? "text-gold" : "text-gold-dark"
-                  }`}
-                >
-                  {item.label}
-                </p>
+                {iconWrapper}
+                {labelText}
                 <p
                   className={`mt-1 text-sm font-medium leading-relaxed ${
                     item.highlight ? "text-white" : "text-charcoal"
@@ -93,10 +147,6 @@ export default function ContactSection() {
                 </p>
               </>
             );
-
-            const cardClasses = item.highlight
-              ? "rounded-2xl bg-forest p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5"
-              : "rounded-2xl border border-forest/10 bg-white p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5";
 
             return item.href ? (
               <a
