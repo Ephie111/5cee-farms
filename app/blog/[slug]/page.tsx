@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/blog/BlogCard";
+import BlogVideoEmbed from "@/components/blog/BlogVideoEmbed";
 import { getBlogPostBySlug, getRelatedBlogPosts, formatBlogDate, BlogPost } from "@/lib/blog";
 
 export default function BlogPostPage() {
@@ -14,9 +16,15 @@ export default function BlogPostPage() {
   const [related, setRelated] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    const found = getBlogPostBySlug(params.slug);
-    setPost(found ?? null);
-    if (found) setRelated(getRelatedBlogPosts(found));
+    let cancelled = false;
+    getBlogPostBySlug(params.slug).then((found) => {
+      if (cancelled) return;
+      setPost(found ?? null);
+      if (found) getRelatedBlogPosts(found).then((r) => !cancelled && setRelated(r));
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [params.slug]);
 
   if (post === undefined) {
@@ -61,13 +69,30 @@ export default function BlogPostPage() {
             {post.author} · {formatBlogDate(post.publishedAt)} · {post.readTimeMinutes} min read
           </p>
 
-          {/* Featured image placeholder */}
-          <div className="img-placeholder mt-8 aspect-video w-full rounded-2xl">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0021 3H3a1.5 1.5 0 00-1.5 1.5v15A1.5 1.5 0 003 21z" />
-            </svg>
-            <span className="text-xs font-medium">Blog photo</span>
-          </div>
+          {post.videoUrl ? (
+            <div className="mt-8">
+              <BlogVideoEmbed videoUrl={post.videoUrl} title={post.title} />
+            </div>
+          ) : post.image ? (
+            <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-2xl">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+                style={{ objectPosition: post.imagePosition ?? "center" }}
+                priority
+              />
+            </div>
+          ) : (
+            <div className="img-placeholder mt-8 aspect-video w-full rounded-2xl">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0021 3H3a1.5 1.5 0 00-1.5 1.5v15A1.5 1.5 0 003 21z" />
+              </svg>
+              <span className="text-xs font-medium">Blog photo</span>
+            </div>
+          )}
 
           <div className="mt-8 space-y-5 text-[15px] leading-relaxed text-charcoal/80">
             {post.content.map((paragraph, i) => (

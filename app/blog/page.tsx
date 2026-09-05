@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BlogCard from "@/components/blog/BlogCard";
@@ -15,13 +15,17 @@ const CATEGORIES: (BlogPost["category"] | "All")[] = [
 ];
 
 export default function BlogPage() {
-  const posts = getAllBlogPosts();
+  const [posts, setPosts] = useState<BlogPost[] | null>(null);
   const [filter, setFilter] = useState<(typeof CATEGORIES)[number]>("All");
 
-  const filtered = useMemo(
-    () => (filter === "All" ? posts : posts.filter((p) => p.category === filter)),
-    [posts, filter]
-  );
+  useEffect(() => {
+    getAllBlogPosts().then(setPosts);
+  }, []);
+
+  const filtered = useMemo(() => {
+    if (!posts) return [];
+    return filter === "All" ? posts : posts.filter((p) => p.category === filter);
+  }, [posts, filter]);
 
   return (
     <>
@@ -53,7 +57,9 @@ export default function BlogPage() {
             ))}
           </div>
 
-          {filtered.length === 0 ? (
+          {posts === null ? (
+            <p className="mt-16 text-center text-sm text-charcoal/50">Loading posts…</p>
+          ) : filtered.length === 0 ? (
             <div className="mt-16 rounded-2xl border border-dashed border-forest/20 py-16 text-center text-charcoal/50">
               <p>No posts in this category yet.</p>
             </div>
