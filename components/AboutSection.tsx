@@ -98,7 +98,6 @@ export default function AboutSection() {
       {/* Farm tour video */}
       <div className="mt-14">
         <span className="section-eyebrow text-gold-dark">See It For Yourself</span>
-        <h3 className="mt-2 text-2xl font-bold">A Look Around the Farm</h3>
         <div className="mt-6 overflow-hidden rounded-2xl bg-black">
           <video
             src="/videos/farm-video.mp4"
