@@ -25,6 +25,11 @@ const OPERATIONS_TEAM: TeamMember[] = [
   { name: "Christopher Daniel", role: "Operations Team", photo: "/images/team/christopherdaniel.jpg"},
   { name:  "Paul Damurak", role: "Operations Team", photo: "/images/team/pauldamurak.jpg"},
   { name:  "Samuel Jacob", role: "Operations Team", photo: "/images/team/samueljacob.jpg"},
+  { name:  "Onyinyechi Ndirika", role: "Operations Team"},
+  { name:  "Ezra Ladat Yitina", role: "Operations Team"},
+  { name:  "Anhoe Doesom Destiny", role: "Operations Team"},
+  { name:  "Sambo Shekwolo Joseph", role: "Operations Team"},
+  
 ];
 
 export default function TeamSection() {
