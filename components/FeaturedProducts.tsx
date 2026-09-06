@@ -25,7 +25,7 @@ export default async function FeaturedProducts() {
       ) : (
         <div className="mt-10 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {products.map((product, i) => (
-            <ScrollReveal key={product.id} delayMs={i * 80}>
+            <ScrollReveal key={product.id} delayMs={i * 80} variant="zoom" scaleFrom={0.9}>
               <ProductCard product={product} />
             </ScrollReveal>
           ))}

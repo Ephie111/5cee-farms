@@ -1,3 +1,6 @@
+import ScrollReveal from "./ScrollReveal";
+import GradientBorderCard from "./GradientBorderCard";
+
 type SimpleContactItem = {
   label: string;
   value: string;
@@ -86,7 +89,7 @@ export default function ContactSection() {
 
         {/* Contact method cards — evenly sized, WhatsApp visually emphasized as the fastest channel */}
         <div className="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CONTACT_DETAILS.map((item) => {
+          {CONTACT_DETAILS.map((item, i) => {
             const iconWrapper = (
               <span
                 className={`flex h-12 w-12 items-center justify-center rounded-full ${
@@ -106,9 +109,9 @@ export default function ContactSection() {
               </p>
             );
 
-            const cardClasses = item.highlight
-              ? "rounded-2xl bg-forest p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5"
-              : "rounded-2xl border border-forest/10 bg-white p-6 text-center shadow-sm transition-transform hover:-translate-y-0.5";
+            const innerClassName = item.highlight
+              ? "flex flex-col items-center bg-forest p-6 text-center"
+              : "flex flex-col items-center bg-white p-6 text-center";
 
             // Multi-value cards (currently just Phone) render as a plain
             // card with each number as its own clickable line — can't
@@ -116,25 +119,27 @@ export default function ContactSection() {
             // separate destinations to call.
             if ("values" in item) {
               return (
-                <div key={item.label} className={`flex flex-col items-center ${cardClasses}`}>
-                  {iconWrapper}
-                  {labelText}
-                  <div className="mt-1 space-y-0.5">
-                    {item.values.map((v) => (
-                      <a
-                        key={v.href}
-                        href={v.href}
-                        className="block text-sm font-medium leading-relaxed text-charcoal hover:text-forest hover:underline"
-                      >
-                        {v.text}
-                      </a>
-                    ))}
-                  </div>
-                </div>
+                <ScrollReveal key={item.label} delayMs={i * 100} variant="tilt" className="h-full">
+                  <GradientBorderCard className="h-full" innerClassName={innerClassName}>
+                    {iconWrapper}
+                    {labelText}
+                    <div className="mt-1 space-y-0.5">
+                      {item.values.map((v) => (
+                        <a
+                          key={v.href}
+                          href={v.href}
+                          className="block text-sm font-medium leading-relaxed text-charcoal hover:text-forest hover:underline"
+                        >
+                          {v.text}
+                        </a>
+                      ))}
+                    </div>
+                  </GradientBorderCard>
+                </ScrollReveal>
               );
             }
 
-            const CardInner = (
+            const cardContent = (
               <>
                 {iconWrapper}
                 {labelText}
@@ -148,20 +153,17 @@ export default function ContactSection() {
               </>
             );
 
-            return item.href ? (
-              <a
-                key={item.label}
-                href={item.href}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-                rel="noreferrer"
-                className={`flex flex-col items-center ${cardClasses}`}
-              >
-                {CardInner}
-              </a>
-            ) : (
-              <div key={item.label} className={`flex flex-col items-center ${cardClasses}`}>
-                {CardInner}
-              </div>
+            return (
+              <ScrollReveal key={item.label} delayMs={i * 100} variant="tilt" className="h-full">
+                <GradientBorderCard
+                  className="h-full"
+                  innerClassName={innerClassName}
+                  href={item.href}
+                  target={item.href?.startsWith("http") ? "_blank" : undefined}
+                >
+                  {cardContent}
+                </GradientBorderCard>
+              </ScrollReveal>
             );
           })}
         </div>

@@ -1,4 +1,7 @@
+import Image from "next/image";
 import CountUp from "./CountUp";
+import ScrollReveal from "./ScrollReveal";
+import GradientBorderCard from "./GradientBorderCard";
 
 const PILLARS = [
   {
@@ -13,7 +16,7 @@ const PILLARS = [
   },
   {
     title: "Built to Scale",
-    body: "Pursuing vertical integration — hatchery, feed milling, processing, cold-chain and branded retail.",
+    body: "Pursuing vertical integration, hatchery, feed milling, processing, cold-chain and branded retail.",
     icon: "M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72M6.75 18h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75h-3.75a.75.75 0 00-.75.75v3.75c0 .414.336.75.75.75z",
   },
 ];
@@ -40,12 +43,12 @@ export default function AboutSection() {
           {/* Quick facts strip — breaks up the text visually and gives the story a scannable anchor */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {QUICK_FACTS.map((fact) => (
-              <div key={fact.label} className="rounded-xl border border-forest/10 bg-white px-4 py-3">
+              <GradientBorderCard key={fact.label} innerClassName="bg-white px-4 py-3">
                 <p className="font-display text-sm font-extrabold text-forest">
                   {fact.numeric !== null ? <CountUp target={fact.numeric} /> : fact.value}
                 </p>
                 <p className="mt-0.5 text-[11px] uppercase tracking-wide text-charcoal/50">{fact.label}</p>
-              </div>
+              </GradientBorderCard>
             ))}
           </div>
 
@@ -61,14 +64,14 @@ export default function AboutSection() {
             </p>
             <p>
               We&rsquo;re pursuing vertical integration across the poultry
-              value chain — hatchery operations, feed milling, processing,
-              cold-chain distribution, and branded retail — while creating
+              value chain, hatchery operations, feed milling, processing,
+              cold-chain distribution, and branded retail, while creating
               employment, equipping aspiring farmers with modern
               agricultural skills, and fostering entrepreneurship throughout
               the value chain.
             </p>
             <p>
-              At 5CEE Farms, we are not simply producing poultry — we are
+              At 5CEE Farms, we are not simply producing chickens, we are
               building an integrated food company dedicated to nourishing
               communities, empowering people, creating jobs, and helping
               shape the future of agriculture in Nigeria.
@@ -76,77 +79,94 @@ export default function AboutSection() {
           </div>
         </div>
 
-        {/* Farm photo placeholder */}
-        <div className="img-placeholder aspect-video w-full rounded-2xl lg:sticky lg:top-24">
-          <div className="flex flex-col items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-9 w-9"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0021 3H3a1.5 1.5 0 00-1.5 1.5v15A1.5 1.5 0 003 21z"
-              />
-            </svg>
-            <span className="text-xs font-medium">Farm site photo</span>
+        {/* Real farm photo — poultry holding pens. Scales and fades in
+            as it scrolls into view, rather than just sitting there
+            statically like the surrounding text. */}
+        <ScrollReveal scaleFrom={0.92} className="lg:sticky lg:top-24">
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-xl">
+            <Image
+              src="/images/about-farm.jpg"
+              alt="5CEE Farms poultry holding pens"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
           </div>
-        </div>
+        </ScrollReveal>
       </div>
 
-      {/* Mission & Vision */}
-      <div className="mt-14 grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl border border-forest/10 bg-forest p-7 text-white shadow-sm">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-            Our Mission
-          </span>
-          <p className="mt-4 text-[15px] leading-relaxed text-white/85">
-            Our mission is to produce clean, nutritious, and responsibly
-            raised poultry products that consumers can trust. We emphasize
-            sound husbandry practices, strict biosecurity, and high
-            production standards to deliver wholesome chicken products that
-            support healthier diets for Nigerian families. By focusing on
-            quality rather than shortcuts, we seek to build a trusted brand
-            known for consistency, food safety, and customer confidence.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-forest/10 bg-white p-7 shadow-sm">
-          <span className="section-eyebrow text-gold-dark">Our Vision</span>
-          <p className="mt-4 text-[15px] leading-relaxed text-charcoal/80">
-            The vision for 5CEE Farms originated from a lifelong aspiration
-            to build an enterprise with lasting social and economic impact.
-            Rather than pursuing agriculture solely as a business
-            opportunity, the company was founded on the belief that
-            sustainable food production can improve lives, empower
-            communities, and stimulate local economic growth.
-          </p>
-        </div>
-      </div>
-
-      {/* Pillars — evenly sized, icon-led cards */}
-      <dl className="mt-6 grid gap-5 sm:grid-cols-3">
-        {PILLARS.map((p) => (
-          <div
-            key={p.title}
-            className="rounded-2xl border border-forest/10 bg-white p-6 shadow-sm"
+      {/* Farm tour video */}
+      <div className="mt-14">
+        <span className="section-eyebrow text-gold-dark">See It For Yourself</span>
+        <h3 className="mt-2 text-2xl font-bold">A Look Around the Farm</h3>
+        <div className="mt-6 overflow-hidden rounded-2xl bg-black">
+          <video
+            src="/videos/farm-video.mp4"
+            autoPlay
+            muted
+            loop
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-forest/10 text-forest">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d={p.icon} />
-              </svg>
+            Your browser doesn&apos;t support embedded video.
+          </video>
+        </div>
+      </div>
+
+      {/* Mission & Vision — slide in from opposite sides, converging toward each other */}
+      <div className="mt-14 grid gap-6 sm:grid-cols-2">
+        <ScrollReveal variant="slide-left" className="h-full">
+          <GradientBorderCard className="h-full" innerClassName="bg-forest p-7 text-white">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+              Our Mission
             </span>
-            <dt className="mt-4 font-display text-sm font-bold text-forest">
-              {p.title}
-            </dt>
-            <dd className="mt-1.5 text-sm leading-relaxed text-charcoal/70">
-              {p.body}
-            </dd>
-          </div>
+            <p className="mt-4 text-[15px] leading-relaxed text-white/85">
+              Our mission is to produce clean, nutritious, and responsibly
+              raised poultry products that consumers can trust. We emphasize
+              sound husbandry practices, strict biosecurity, and high
+              production standards to deliver wholesome chicken products that
+              support healthier diets for Nigerian families. By focusing on
+              quality rather than shortcuts, we seek to build a trusted brand
+              known for consistency, food safety, and customer confidence.
+            </p>
+          </GradientBorderCard>
+        </ScrollReveal>
+
+        <ScrollReveal variant="slide-right" className="h-full">
+          <GradientBorderCard className="h-full" innerClassName="bg-white p-7">
+            <span className="section-eyebrow text-gold-dark">Our Vision</span>
+            <p className="mt-4 text-[15px] leading-relaxed text-charcoal/80">
+              The vision for 5CEE Farms originated from a lifelong aspiration
+              to build an enterprise with lasting social and economic impact.
+              Rather than pursuing agriculture solely as a business
+              opportunity, the company was founded on the belief that
+              sustainable food production can improve lives, empower
+              communities, and stimulate local economic growth.
+            </p>
+          </GradientBorderCard>
+        </ScrollReveal>
+      </div>
+
+      {/* Pillars — evenly sized, icon-led cards, tilting up into place with a stagger */}
+      <dl className="mt-6 grid gap-5 sm:grid-cols-3">
+        {PILLARS.map((p, i) => (
+          <ScrollReveal key={p.title} delayMs={i * 120} variant="tilt">
+            <GradientBorderCard innerClassName="bg-white p-6">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-forest/10 text-forest">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={p.icon} />
+                </svg>
+              </span>
+              <dt className="mt-4 font-display text-sm font-bold text-forest">
+                {p.title}
+              </dt>
+              <dd className="mt-1.5 text-sm leading-relaxed text-charcoal/70">
+                {p.body}
+              </dd>
+            </GradientBorderCard>
+          </ScrollReveal>
         ))}
       </dl>
     </section>

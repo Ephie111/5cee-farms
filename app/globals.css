@@ -38,10 +38,10 @@
     @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold-dark;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gold px-7 py-3 text-sm font-semibold text-charcoal shadow-sm transition-all hover:bg-gold-dark hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest;
+    @apply inline-flex items-center justify-center rounded-full bg-gold px-7 py-3 text-sm font-semibold text-charcoal shadow-sm transition-all duration-200 hover:scale-[1.03] hover:bg-gold-dark hover:shadow-lg hover:shadow-gold/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-full border-2 border-white/80 px-7 py-3 text-sm font-semibold text-white transition-all hover:bg-white hover:text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+    @apply inline-flex items-center justify-center rounded-full border-2 border-white/80 px-7 py-3 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.03] hover:bg-white hover:text-forest hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
   }
   .img-placeholder {
     @apply flex items-center justify-center bg-forest/5 border border-dashed border-forest/30 text-forest/50;
@@ -119,6 +119,164 @@
 
 @utility animate-cart-bounce {
   animation: cart-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Cinematic hero photo entrance — starts noticeably zoomed in, offset
+   downward, dim and slightly desaturated (like a curtain lifting),
+   then settles into place at full brightness. Slower and more
+   deliberate than a typical UI transition — cinematic reveals read as
+   "dramatic" partly because they take their time. Runs once. Applied
+   to the INNERMOST wrapper, separate from the continuous animations
+   below, so none of them fight over the same transform. */
+@keyframes hero-photo-in {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(1.18);
+    filter: brightness(0.5) saturate(0.6);
+  }
+  55% {
+    opacity: 1;
+    filter: brightness(0.8) saturate(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+@utility animate-hero-photo-in {
+  animation: hero-photo-in 2.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Continuous, very subtle floating drift — applied to a MIDDLE
+   wrapper, running indefinitely alongside (not instead of) the
+   one-time entrance on the inner element. */
+@keyframes hero-photo-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@utility animate-hero-photo-float {
+  animation: hero-photo-float 5s ease-in-out infinite;
+}
+
+/* Slow continuous "Ken Burns" zoom — the classic documentary-film
+   technique for making a still photo feel alive rather than static.
+   Applied to the OUTERMOST wrapper, so it compounds with (rather than
+   overwrites) the float and entrance on the layers inside it. */
+@keyframes hero-photo-kenburns {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@utility animate-hero-photo-kenburns {
+  animation: hero-photo-kenburns 14s ease-in-out infinite;
+}
+
+/* One-time diagonal light sweep across the photo, timed to play just
+   as the entrance finishes settling — a glint of light passing across
+   glass or a polished surface, for a premium, deliberate finishing
+   touch rather than the reveal just abruptly stopping. */
+@keyframes hero-photo-shine {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+@utility animate-hero-photo-shine {
+  animation: hero-photo-shine 1.6s ease-in-out 2.3s both;
+}
+
+/* On-load 3D tilt-in for the Hero trust badges — since they're above
+   the fold and already visible at page load, they can't use the
+   scroll-triggered ScrollReveal component (which needs the element to
+   still be off-screen to detect it entering view). This gives them
+   the same dramatic tilt used for other cards, just triggered on load
+   with a staggered delay instead of on scroll. */
+@keyframes badge-tilt-in {
+  0% {
+    opacity: 0;
+    transform: perspective(900px) rotateX(35deg) translateY(32px) scale(0.85);
+  }
+  70% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(-4deg) translateY(-4px) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg) translateY(0) scale(1);
+  }
+}
+
+@utility animate-badge-tilt-in {
+  animation: badge-tilt-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* One-time "drawn frame" entrance — an SVG outline traces itself
+   around the photo, then the photo fades in inside it. Unlike a
+   continuous loop, this only plays once on page load: a strong,
+   memorable "reveal" moment rather than a subtle background motion. */
+@keyframes frame-draw {
+  from {
+    stroke-dashoffset: 1500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility animate-frame-draw {
+  animation: frame-draw 1.3s ease-in-out forwards;
+}
+
+@keyframes photo-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@utility animate-photo-reveal {
+  animation: photo-reveal 0.7s ease-out forwards;
+}
+
+/* Slow breathing motion for the Hero's decorative glow — combines a
+   gentle scale with opacity, closer to "floating/breathing" than a
+   flat opacity-only pulse. */
+@keyframes hero-glow-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+@utility hero-glow-breathe {
+  animation: hero-glow-breathe 6s ease-in-out infinite;
 }
 
 /* ------------------------------------------------------------------ */

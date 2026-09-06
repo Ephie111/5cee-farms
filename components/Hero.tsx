@@ -32,7 +32,7 @@ export default function Hero() {
           feeling static. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-16 -top-10 h-[26rem] w-[26rem] animate-pulse rounded-full bg-leaf/10 blur-3xl [animation-duration:6s]"
+        className="hero-glow-breathe pointer-events-none absolute -right-16 -top-10 h-[26rem] w-[26rem] rounded-full bg-leaf/10 blur-3xl"
       />
 
       <div className="relative mx-auto max-w-[1600px] px-6 pt-16 lg:px-10 lg:pt-20">
@@ -81,38 +81,66 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Hero image placeholder — swap for a real farm / product photo */}
-          <div
-            className="img-placeholder animate-fade-in-up aspect-[4/3] w-full rounded-2xl bg-white/5 border-white/20"
-            style={{ animationDelay: "180ms" }}
-          >
-            <div className="flex flex-col items-center gap-2 text-white/60">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18a1.5 1.5 0 001.5-1.5V4.5A1.5 1.5 0 0021 3H3a1.5 1.5 0 00-1.5 1.5v15A1.5 1.5 0 003 21z"
-                />
-              </svg>
-              <span className="text-xs font-medium">Farm / product photo</span>
+          {/* Administrative office photo — a slower, moodier cinematic
+              reveal (dim and desaturated, brightening as it settles),
+              a one-time light sweep once it lands, a permanent subtle
+              vignette for depth, and a continuous slow "Ken Burns"
+              zoom layered under a gentle float — three separate nested
+              wrappers so none of the animations fight over the same
+              transform. */}
+          <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+            <div className="animate-hero-photo-kenburns aspect-[4/3] w-full overflow-hidden rounded-2xl">
+              <div className="animate-hero-photo-float h-full w-full">
+                <div
+                  className="animate-hero-photo-in relative h-full w-full overflow-hidden rounded-2xl shadow-2xl"
+                  style={{ animationDelay: "180ms" }}
+                >
+                  <img
+                    src="/images/administrativeoffice.jpg"
+                    alt="5CEE Farms Ltd administrative office"
+                    className="h-full w-full object-cover"
+                  />
+                  {/* Permanent subtle vignette — darkened corners for depth and mood */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0"
+                    style={{ background: "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.35) 100%)" }}
+                  />
+                  {/* One-time diagonal light sweep, timed to play as the entrance settles */}
+                  <div
+                    aria-hidden
+                    className="animate-hero-photo-shine pointer-events-none absolute inset-0"
+                    style={{ background: "linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.35) 50%, transparent 58%)" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Info badge, settling in just after the photo */}
+            <div
+              className="animate-fade-in-up absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-white px-5 py-3 shadow-xl sm:left-8"
+              style={{ animationDelay: "2000ms" }}
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest/10 text-forest">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m7.5-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21" />
+                </svg>
+              </span>
+              <div className="leading-tight">
+                <p className="font-display text-sm font-bold text-charcoal">Our Head Office</p>
+                <p className="text-xs text-charcoal/60"></p>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Trust badges — icon-circle cards, animate in after the main content settles */}
-        <div className="mt-12 grid grid-cols-2 gap-6 border-t border-white/10 py-8 sm:grid-cols-4 lg:mt-14">
+        <div className="mt-16 grid grid-cols-2 gap-6 border-t border-white/10 py-8 sm:grid-cols-4 lg:mt-20">
           {TRUST_BADGES.map((badge, i) => (
             <div
               key={badge.label}
-              className="animate-fade-in-up flex flex-col items-center gap-2 text-center"
-              style={{ animationDelay: `${480 + i * 80}ms` }}
+              className="animate-badge-tilt-in flex flex-col items-center gap-2 text-center"
+              style={{ animationDelay: `${480 + i * 100}ms` }}
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-white/5 text-gold">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

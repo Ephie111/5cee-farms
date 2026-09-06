@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product, formatNaira } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
+import GradientBorderCard from "./GradientBorderCard";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -20,7 +21,7 @@ export default function ProductCard({ product }: { product: Product }) {
     });
   }
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-forest/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <GradientBorderCard className="h-full" innerClassName="flex h-full flex-col overflow-hidden bg-white">
       <Link href={`/product/${product.id}`} className={product.imageUrl ? "relative aspect-square w-full" : "img-placeholder relative aspect-square w-full"}>
         {product.imageUrl ? (
           <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
@@ -76,6 +77,6 @@ export default function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
       </div>
-    </div>
+    </GradientBorderCard>
   );
 }
