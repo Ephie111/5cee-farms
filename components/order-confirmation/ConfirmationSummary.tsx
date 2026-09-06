@@ -79,10 +79,12 @@ export default function ConfirmationSummary({
           <dt className="text-charcoal/60">Subtotal</dt>
           <dd className="font-medium">{formatNaira(subtotal)}</dd>
         </div>
-        <div className="flex justify-between">
-          <dt className="text-charcoal/60">Delivery Fee</dt>
-          <dd className="font-medium">{formatNaira(deliveryFee)}</dd>
-        </div>
+        {deliveryFee > 0 && (
+          <div className="flex justify-between">
+            <dt className="text-charcoal/60">Delivery Fee</dt>
+            <dd className="font-medium">{formatNaira(deliveryFee)}</dd>
+          </div>
+        )}
         <div className="flex justify-between border-t border-forest/10 pt-2">
           <dt className="font-display font-bold text-charcoal">Total Paid</dt>
           <dd className="font-display text-base font-extrabold text-forest">{formatNaira(total)}</dd>

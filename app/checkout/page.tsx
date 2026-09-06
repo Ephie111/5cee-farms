@@ -14,8 +14,6 @@ import { createOrder } from "@/lib/orders";
 import { checkStockAvailability } from "@/lib/products";
 import { payWithPaystack } from "@/lib/paystack";
 
-const DELIVERY_FEE = 1500;
-
 const EMPTY_DELIVERY: DeliveryDetails = {
   fullName: "",
   phone: "",
@@ -80,7 +78,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      const total = subtotal + DELIVERY_FEE;
+      const total = subtotal;
       let paymentStatus: "pending" | "paid" = "pending";
       let paystackReference: string | undefined;
 
@@ -128,7 +126,7 @@ export default function CheckoutPage() {
       const order = await createOrder({
         items,
         subtotal,
-        deliveryFee: DELIVERY_FEE,
+        deliveryFee: 0,
         fullName: delivery.fullName,
         phone: delivery.phone,
         email: delivery.email || undefined,
@@ -187,7 +185,6 @@ export default function CheckoutPage() {
             <div className="space-y-4">
               <OrderSummary
                 subtotal={subtotal}
-                deliveryFee={DELIVERY_FEE}
                 showCheckoutButton={false}
               />
 
