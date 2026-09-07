@@ -96,7 +96,7 @@ export default function Hero() {
                   style={{ animationDelay: "180ms" }}
                 >
                   <img
-                    src="/images/administrativeoffice.jpg"
+                    src="/images/about-farm.jpg"
                     alt="5CEE Farms Ltd administrative office"
                     className="h-full w-full object-cover"
                   />
@@ -127,7 +127,7 @@ export default function Hero() {
                 </svg>
               </span>
               <div className="leading-tight">
-                <p className="font-display text-sm font-bold text-charcoal">Head Office</p>
+                <p className="font-display text-sm font-bold text-charcoal">Farm Office</p>
                 <p className="text-xs text-charcoal/60"></p>
               </div>
             </div>
