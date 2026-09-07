@@ -85,7 +85,7 @@ export default function AboutSection() {
         <ScrollReveal scaleFrom={0.92} className="lg:sticky lg:top-24">
           <div className="relative aspect-video w-full overflow-hidden rounded-2xl shadow-xl">
             <Image
-              src="/images/administrativeoffice.jpg"
+              src="/images/office.jpg"
               alt="5CEE Farms poultry holding pens"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
