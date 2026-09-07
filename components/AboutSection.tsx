@@ -92,6 +92,20 @@ export default function AboutSection() {
               className="object-cover"
             />
           </div>
+          <div
+              className="animate-fade-in-up absolute -bottom-6 left-6 flex items-center gap-3 rounded-2xl bg-white px-5 py-3 shadow-xl sm:left-8"
+              style={{ animationDelay: "2000ms" }}
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest/10 text-forest">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m7.5-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21" />
+                </svg>
+              </span>
+              <div className="leading-tight">
+                <p className="font-display text-sm font-bold text-charcoal">Our Office</p>
+                <p className="text-xs text-charcoal/60"></p>
+              </div>
+            </div>
         </ScrollReveal>
       </div>
 

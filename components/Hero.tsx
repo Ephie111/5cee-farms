@@ -127,7 +127,7 @@ export default function Hero() {
                 </svg>
               </span>
               <div className="leading-tight">
-                <p className="font-display text-sm font-bold text-charcoal">Farm Office</p>
+                <p className="font-display text-sm font-bold text-charcoal">Our Product</p>
                 <p className="text-xs text-charcoal/60"></p>
               </div>
             </div>
