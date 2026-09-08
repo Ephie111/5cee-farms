@@ -10,7 +10,7 @@ import ScrollReveal from "./ScrollReveal";
 const FOUNDER: TeamMember = {
   name: "Chiso Nwokafor, PhD",
   role: "CEO",
-  photo: "/images/team/chisonwokafor.jpg",
+  photo: "/images/team/chiso.jpg",
 };
 
 const OPERATIONS_TEAM: TeamMember[] = [
