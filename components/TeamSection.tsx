@@ -17,7 +17,7 @@ const OPERATIONS_TEAM: TeamMember[] = [
   { name: "Naanlang Haruna Amos", role: "Operations Team", photo: "/images/team/amosharuna.jpg" },
   { name: "Ezra Melchizedek", role: "Operations Team", photo: "/images/team/ezramelchizedek.jpg" },
   { name: "Nnaji Ogechi Elizabeth", role: "Operations Team", photo: "/images/team/nnajiogechi.jpg" },
-  { name: "Ezeh Rosemary Chidimma", role: "Oeration Manager",  photo: "/images/team/ezehrosemary.jpg"},
+  { name: "Ezeh Rosemary Chidimma", role: "Operation Manager",  photo: "/images/team/ezehrosemary.jpg"},
   { name: "Chinyere Foreign Okoli", role: "Business Coordinator", photo: "/images/team/chinyereokoli.jpg" },
   { name: "Engr. Onyeka Eze", role: "Site Engineer", photo: "/images/team/onyekaeze.jpg"},
   { name: "Arc. Peter Okpala", role: "Head of Constructions",  photo: "/images/team/uchennaokpala.jpg" },
